@@ -45,6 +45,13 @@ async function run() {
             
           });
       
+          app.get("/dress/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const dress = await dressCollection.findOne(query);
+            res.send(dress);
+          });
+      
 
     } finally {
         //   await client.close();
