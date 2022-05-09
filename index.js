@@ -52,6 +52,14 @@ async function run() {
             res.send(dress);
           });
       
+          app.get("/mydress", async (req, res) => {
+            const email = req.query.email;
+            const query = { sEmail:email };
+            const cursor =  await dressCollection.find(query);
+            const myDress = await cursor.toArray();
+            res.send(myDress);
+          });
+      
 
     } finally {
         //   await client.close();
