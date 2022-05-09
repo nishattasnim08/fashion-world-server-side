@@ -21,7 +21,7 @@ async function run() {
         await client.connect();
         const dressCollection = client.db("fashiondb").collection("dresses");
         // query for dresses that have a runtime less than 15 minutes
-        app.get("/dresses", async(req, res) => {
+        app.get("/dresses", async (req, res) => {
 
             const query = {};
 
@@ -32,34 +32,52 @@ async function run() {
         });
 
         app.post("/dresses", async (req, res) => {
-            const newDress  = req.body
+            const newDress = req.body
             const result = await dressCollection.insertOne(newDress);
             res.send(result);
-          });
-      
-          app.delete("/dress/:id", async (req, res) => {
+        });
+
+        app.delete("/dress/:id", async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await dressCollection.deleteOne(query);
             res.send(result)
-            
-          });
-      
-          app.get("/dress/:id", async (req, res) => {
+
+        });
+
+        app.get("/dress/:id", async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const dress = await dressCollection.findOne(query);
             res.send(dress);
-          });
-      
-          app.get("/mydress", async (req, res) => {
+        });
+
+        app.get("/mydress", async (req, res) => {
             const email = req.query.email;
-            const query = { sEmail:email };
-            const cursor =  await dressCollection.find(query);
+            const query = { sEmail: email };
+            const cursor = await dressCollection.find(query);
             const myDress = await cursor.toArray();
             res.send(myDress);
-          });
-      
+        });
+
+        app.put("/dress/:id", async (req, res) => {
+            const id = req.params.id;
+            const quantity = req.body.quantity
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateItem = {
+
+                $set: {
+                    quantity
+                },
+
+            };
+            const result = await dressCollection.updateOne(filter, updateItem, options);
+            res.send(result)
+
+        });
+
 
     } finally {
         //   await client.close();
